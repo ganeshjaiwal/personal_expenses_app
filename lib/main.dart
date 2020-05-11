@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import './models/transaction.dart';
@@ -12,8 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
-        accentColor: Colors.limeAccent,
+        primaryColor: Color.fromRGBO(110, 106, 252, 1),
+        accentColor: Color.fromRGBO(47, 216, 253, 1),
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
               title: TextStyle(
@@ -95,19 +96,43 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                child: Text('Summary'),
+      body: transactions.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: 250,
+                    padding: EdgeInsets.only(bottom: 15.0),
+                    child: Image.asset(
+                      'assets/images/no-transactions.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 60.0),
+                    child: Text(
+                      'No transactions added yet!',
+                      style: Theme.of(context)
+                          .textTheme
+                          .title
+                          .copyWith(color: Colors.blueGrey),
+                    ),
+                  )
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    width: double.infinity,
+                    child: Chart(transactions),
+                  ),
+                  TransactionsList(transactions),
+                ],
               ),
             ),
-            TransactionsList(transactions),
-          ],
-        ),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

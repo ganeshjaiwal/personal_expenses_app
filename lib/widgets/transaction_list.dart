@@ -11,100 +11,120 @@ class TransactionsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 300,
-      child: _userTransactions.isEmpty
-          ? Column(
-              children: <Widget>[
-                Container(
-                  height: 250,
-                  child: Image.asset(
-                    'assets/images/no-transactions.png',
-                    fit: BoxFit.cover,
-                  ),
+      child: ListView.builder(
+        itemBuilder: (ctx, index) {
+          return Card(
+            elevation: 5,
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+            child: ListTile(
+                leading: _getTypeIconContainer(_userTransactions[index].type),
+                title: Text(
+                  _userTransactions[index].title,
+                  style:
+                      Theme.of(context).textTheme.title.copyWith(fontSize: 15),
                 ),
-                Text(
-                  'No transactions added yet!',
-                  style: Theme.of(context).textTheme.title,
-                )
-              ],
-            )
-          : ListView.builder(
-              itemBuilder: (ctx, index) {
-                return Card(
+                subtitle: Text(
+                  DateFormat.yMMMMd("en_US")
+                      .add_jm()
+                      .format(_userTransactions[index].date),
+                  style: Theme.of(context).textTheme.title.copyWith(
+                        height: 1.5,
+                        color: Colors.grey,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                      ),
+                ),
+                trailing: Container(
+                  width: 100.0,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      _getTypeIconContainer(_userTransactions[index].type),
-                      Expanded(
-                        // width:   double.infinity,
-                        child: Container(
-                          width: 20.0,
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 5.0,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Flexible(
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 5.0),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        _userTransactions[index].title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        softWrap: false,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .title
-                                            .copyWith(
-                                              height: 1.5,
-                                            ),
-                                      ),
-                                      Text(
-                                        DateFormat.yMMMMd("en_US")
-                                            .add_jm()
-                                            .format(
-                                                _userTransactions[index].date),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .title
-                                            .copyWith(
-                                              height: 1.5,
-                                              color: Colors.grey,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(right: 5.0),
-                                child: Text(
-                                  "₹${_userTransactions[index].amount.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            ],
-                          ),
+                      FittedBox(
+                        child: Text(
+                          "₹${_userTransactions[index].amount.toStringAsFixed(2)}",
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold),
                         ),
+                      ),
+                      Container(
+                        width: 20.0,
+                        child: _showOptionsForTransaction(
+                            _userTransactions[index]),
+                        // IconButton(
+                        //   padding: EdgeInsets.only(right: 10),
+                        //   icon: Icon(
+                        //     Icons.more_vert,
+                        //   ),
+                        //   onPressed: () => _showOptionsForTransaction(
+                        //       _userTransactions[index]),
+                        // ),
                       ),
                     ],
                   ),
-                );
-              },
-              itemCount: _userTransactions.length,
-            ),
+                )),
+          );
+        },
+        itemCount: _userTransactions.length,
+      ),
     );
+  }
+
+  Widget _showOptionsForTransaction(tx) {
+    print(tx);
+    return PopupMenuButton<int>(
+      padding: EdgeInsets.only(right: 10.0),
+      onSelected: (val) => _onMenuSelected(val, tx),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          height: 35.0,
+          child: Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(right: 5.0),
+                child: Icon(
+                  Icons.edit,
+                  size: 18,
+                ),
+              ),
+              Text(
+                "Edit",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 2,
+          height: 35.0,
+          child: Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(right: 5.0),
+                child: Icon(
+                  Icons.delete_forever,
+                  size: 20,
+                ),
+              ),
+              Text(
+                "Delete",
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _onMenuSelected(val, tx) {
+    print(val);
+    print(tx);
   }
 
   //Get icon container according to transaction type
@@ -126,17 +146,19 @@ class TransactionsList extends StatelessWidget {
       // Default icon
     }
 
-    return Container(
-      padding: EdgeInsets.all(5.0),
-      margin: EdgeInsets.all(5.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100.0),
-        border: Border.all(color: color, width: 2.0),
-      ),
-      child: Icon(
-        icon,
-        color: color,
-        size: 30.0,
+    return CircleAvatar(
+      backgroundColor: Color.fromRGBO(47, 216, 253, 0.1),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100.0),
+          border: Border.all(color: color, width: 2.0),
+        ),
+        padding: EdgeInsets.all(2.5),
+        child: Icon(
+          icon,
+          color: color,
+          size: 30.0,
+        ),
       ),
     );
   }
