@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_expenses_app/widgets/chart_bar.dart';
 
-import '../models/transaction.dart';
+import '../widgets/chart_bar.dart';
 
 class Chart extends StatefulWidget {
   final recentTransactions;
@@ -45,7 +44,7 @@ class _ChartState extends State<Chart> {
         "day": 0,
         "amount": 0,
       };
-    });
+    }).reversed.toList();
   }
 
   bool checkTransactionForRange(tx) {

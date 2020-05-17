@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class TransactionTypeButtonsList extends StatefulWidget {
   final Function _setTransactionType;
+  final tx;
 
-  TransactionTypeButtonsList(this._setTransactionType);
+  TransactionTypeButtonsList(this._setTransactionType, this.tx);
   @override
   _TransactionTypeButtonsListState createState() =>
       _TransactionTypeButtonsListState();
@@ -12,6 +13,16 @@ class TransactionTypeButtonsList extends StatefulWidget {
 class _TransactionTypeButtonsListState
     extends State<TransactionTypeButtonsList> {
   var _radioValue1 = 1;
+  @override
+  void initState() {
+    _radioValue1 = widget.tx.type == null || widget.tx.type == 'shopping'
+        ? 1
+        : widget.tx.type == 'grocery'
+            ? 2
+            : widget.tx.type == 'bill-payment' ? 3 : 1;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(

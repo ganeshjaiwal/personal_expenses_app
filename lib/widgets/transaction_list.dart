@@ -5,68 +5,65 @@ import '../models/transaction.dart';
 
 class TransactionsList extends StatelessWidget {
   final List<Transaction> _userTransactions;
+  final Function _actionOnSingleTransaction;
 
-  TransactionsList(this._userTransactions);
+  TransactionsList(this._userTransactions, this._actionOnSingleTransaction);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: ListView.builder(
-        itemBuilder: (ctx, index) {
-          return Card(
-            elevation: 5,
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-            child: ListTile(
-                leading: _getTypeIconContainer(_userTransactions[index].type),
-                title: Text(
-                  _userTransactions[index].title,
-                  style:
-                      Theme.of(context).textTheme.title.copyWith(fontSize: 15),
+    return ListView.builder(
+      itemBuilder: (ctx, index) {
+        return Card(
+          elevation: 5,
+          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+          child: ListTile(
+              leading: _getTypeIconContainer(_userTransactions[index].type),
+              title: Text(
+                _userTransactions[index].title,
+                style: Theme.of(context).textTheme.title.copyWith(fontSize: 15),
+              ),
+              subtitle: Text(
+                DateFormat.yMMMMd("en_US")
+                    .add_jm()
+                    .format(_userTransactions[index].date),
+                style: Theme.of(context).textTheme.title.copyWith(
+                      height: 1.5,
+                      color: Colors.grey,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
+              ),
+              trailing: Container(
+                width: 100.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    FittedBox(
+                      child: Text(
+                        "₹${_userTransactions[index].amount.toStringAsFixed(2)}",
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      width: 20.0,
+                      child:
+                          _showOptionsForTransaction(_userTransactions[index]),
+                      // IconButton(
+                      //   padding: EdgeInsets.only(right: 10),
+                      //   icon: Icon(
+                      //     Icons.more_vert,
+                      //   ),
+                      //   onPressed: () => _showOptionsForTransaction(
+                      //       _userTransactions[index]),
+                      // ),
+                    ),
+                  ],
                 ),
-                subtitle: Text(
-                  DateFormat.yMMMMd("en_US")
-                      .add_jm()
-                      .format(_userTransactions[index].date),
-                  style: Theme.of(context).textTheme.title.copyWith(
-                        height: 1.5,
-                        color: Colors.grey,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                      ),
-                ),
-                trailing: Container(
-                  width: 100.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      FittedBox(
-                        child: Text(
-                          "₹${_userTransactions[index].amount.toStringAsFixed(2)}",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        width: 20.0,
-                        child: _showOptionsForTransaction(
-                            _userTransactions[index]),
-                        // IconButton(
-                        //   padding: EdgeInsets.only(right: 10),
-                        //   icon: Icon(
-                        //     Icons.more_vert,
-                        //   ),
-                        //   onPressed: () => _showOptionsForTransaction(
-                        //       _userTransactions[index]),
-                        // ),
-                      ),
-                    ],
-                  ),
-                )),
-          );
-        },
-        itemCount: _userTransactions.length,
-      ),
+              )),
+        );
+      },
+      itemCount: _userTransactions.length,
     );
   }
 
@@ -123,8 +120,10 @@ class TransactionsList extends StatelessWidget {
   }
 
   void _onMenuSelected(val, tx) {
-    print(val);
-    print(tx);
+    _actionOnSingleTransaction(
+      val == 1 ? 'edit' : val == 2 ? 'delete' : '',
+      tx.id,
+    );
   }
 
   //Get icon container according to transaction type
