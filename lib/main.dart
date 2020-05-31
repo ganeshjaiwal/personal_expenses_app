@@ -1,5 +1,7 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
@@ -124,15 +126,28 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final appBar = AppBar(
-      title: Text('Personal Expenses'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _showAddTransactionModal(context, null),
-        )
-      ],
-    );
+    final PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Personal Expenses'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _showAddTransactionModal(context, null),
+                ),
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Personal Expenses'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => _showAddTransactionModal(context, null),
+              )
+            ],
+          );
     final chartWidget = Container(
       height: (mediaQuery.size.height -
               appBar.preferredSize.height -
@@ -148,52 +163,51 @@ class _MyHomePageState extends State<MyHomePage> {
           0.7,
       child: TransactionsList(transactions, actionOnSingleTransaction),
     );
-    return Scaffold(
-      appBar: appBar,
-      body: transactions.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.7,
-                    padding: EdgeInsets.only(bottom: 15.0),
-                    child: Image.asset(
-                      'assets/images/no-transactions.png',
-                      fit: BoxFit.none,
-                    ),
+    final pageBody = transactions.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  height: (mediaQuery.size.height -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top) *
+                      0.7,
+                  padding: EdgeInsets.only(bottom: 15.0),
+                  child: Image.asset(
+                    'assets/images/no-transactions.png',
+                    fit: BoxFit.none,
                   ),
-                  Container(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.3,
-                    padding: EdgeInsets.only(bottom: 60.0),
-                    child: Text(
-                      'No transactions added yet!',
-                      style: Theme.of(context)
-                          .textTheme
-                          .title
-                          .copyWith(color: Colors.blueGrey),
-                    ),
-                  )
-                ],
-              ),
-            )
-          : SingleChildScrollView(
+                ),
+                Container(
+                  height: (mediaQuery.size.height -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top) *
+                      0.3,
+                  padding: EdgeInsets.only(bottom: 60.0),
+                  child: Text(
+                    'No transactions added yet!',
+                    style: Theme.of(context)
+                        .textTheme
+                        .title
+                        .copyWith(color: Colors.blueGrey),
+                  ),
+                )
+              ],
+            ),
+          )
+        : SafeArea(
+            child: SingleChildScrollView(
               child: Column(children: <Widget>[
                 if (isLandscape)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text('List', style: Theme.of(context).textTheme.subhead),
-                      Switch(
-                        inactiveThumbColor: Theme.of(context).primaryColor,
-                        inactiveTrackColor: Theme.of(context).primaryColorLight,
+                      Switch.adaptive(
+                        activeColor: Theme.of(context).accentColor,
+                        activeTrackColor: Theme.of(context).accentColor,
                         value: _showChart,
                         onChanged: (val) {
                           setState(() {
@@ -212,11 +226,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (isLandscape) _showChart ? chartWidget : txListWidget,
               ]),
             ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _showAddTransactionModal(context, null),
-      ),
-    );
+          );
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _showAddTransactionModal(context, null),
+                  ),
+          );
   }
 }
