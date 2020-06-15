@@ -68,7 +68,7 @@ class TransactionsList extends StatelessWidget {
   }
 
   Widget _showOptionsForTransaction(tx) {
-    print(tx);
+    // print(tx);
     return PopupMenuButton<int>(
       padding: EdgeInsets.only(right: 10.0),
       onSelected: (val) => _onMenuSelected(val, tx),
@@ -144,7 +144,6 @@ class TransactionsList extends StatelessWidget {
       color = Colors.orangeAccent;
       // Default icon
     }
-
     return CircleAvatar(
       backgroundColor: Color.fromRGBO(47, 216, 253, 0.1),
       child: Container(

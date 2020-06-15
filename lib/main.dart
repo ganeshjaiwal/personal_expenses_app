@@ -72,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final index = transactions.indexWhere((tx) {
       return tx.id == transaction.id;
     });
+    transaction.type = _transactionType;
     setState(() {
       transactions.replaceRange(index, index + 1, [transaction]);
     });
@@ -85,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (tx == null) {
       tx = new Transaction(id: null, title: null, amount: null, date: null);
     }
+    _transactionType = 'shopping';
     showModalBottomSheet(
       context: cxt,
       builder: (_) {

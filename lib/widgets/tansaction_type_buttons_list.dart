@@ -33,30 +33,45 @@ class _TransactionTypeButtonsListState
           groupValue: _radioValue1,
           onChanged: _handleRadioValueChange1,
         ),
-        new Text(
-          'Shopping',
-          style: new TextStyle(fontSize: 16.0),
+        Icon(
+          Icons.shopping_cart,
+          color: Colors.greenAccent,
+          size: 25.0,
         ),
+        // new Text(
+        //   'Shopping',
+        //   style: new TextStyle(fontSize: 16.0),
+        // ),
         new Radio(
           value: 2,
           groupValue: _radioValue1,
           onChanged: _handleRadioValueChange1,
         ),
-        new Text(
-          'Grocery',
-          style: new TextStyle(
-            fontSize: 16.0,
-          ),
+        Icon(
+          Icons.shopping_basket,
+          color: Colors.greenAccent,
+          size: 25.0,
         ),
+        // new Text(
+        //   'Grocery',
+        //   style: new TextStyle(
+        //     fontSize: 16.0,
+        //   ),
+        // ),
         new Radio(
           value: 3,
           groupValue: _radioValue1,
           onChanged: _handleRadioValueChange1,
         ),
-        new Text(
-          'Bill Payment',
-          style: new TextStyle(fontSize: 16.0),
+        Icon(
+          Icons.payment,
+          color: Colors.blueAccent,
+          size: 25.0,
         ),
+        // new Text(
+        //   'Bill Payment',
+        //   style: new TextStyle(fontSize: 16.0),
+        // ),
       ],
     );
   }

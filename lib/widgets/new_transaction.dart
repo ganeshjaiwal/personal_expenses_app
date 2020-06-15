@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/tansaction_type_buttons_list.dart';
 import '../models/transaction.dart';
+import '../widgets/adaptive_flat_button.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function _addTransaction;
@@ -46,7 +50,6 @@ class _NewTransactionState extends State<NewTransaction> {
     if (enteredTitle.isEmpty || enteredAmount <= 0) {
       return;
     }
-
     if (widget.tx.id != null) {
       var transact = new Transaction(
         id: widget.tx.id,
@@ -139,16 +142,7 @@ class _NewTransactionState extends State<NewTransaction> {
                   Text(DateFormat.yMMMMd("en_US")
                       .add_jm()
                       .format(_selectedDate)),
-                  FlatButton(
-                    child: Text(
-                      'Choose date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: _chooseDate,
-                    textColor: Theme.of(context).primaryColor,
-                  )
+                  AdaptiveFlatButton(_chooseDate, 'Choose Date')
                 ],
               ),
               TransactionTypeButtonsList(widget._setTransactionType, widget.tx),
@@ -156,9 +150,13 @@ class _NewTransactionState extends State<NewTransaction> {
                 height: 12.0,
               ),
               RaisedButton(
-                child: Text(
-                  'Add Transaction',
-                ),
+                child: widget.tx.id != null
+                    ? Text(
+                        'Update',
+                      )
+                    : Text(
+                        'Add Transaction',
+                      ),
                 color: Theme.of(context).primaryColor,
                 textColor: Theme.of(context).textTheme.button.color,
                 padding: EdgeInsets.all(10.0),
