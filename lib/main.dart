@@ -124,6 +124,42 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeModeWidget(
+    chartWidget,
+    txListWidget,
+  ) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('List', style: Theme.of(context).textTheme.subhead),
+          Switch.adaptive(
+            activeColor: Theme.of(context).accentColor,
+            activeTrackColor: Theme.of(context).accentColor,
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          ),
+          Text(
+            'Chart',
+            style: Theme.of(context).textTheme.subhead,
+          ),
+        ],
+      ),
+      _showChart ? chartWidget : txListWidget
+    ];
+  }
+
+  List<Widget> _buildPortraitModeWidget(
+    chartWidget,
+    txListWidget,
+  ) {
+    return [chartWidget, txListWidget];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -203,29 +239,15 @@ class _MyHomePageState extends State<MyHomePage> {
             child: SingleChildScrollView(
               child: Column(children: <Widget>[
                 if (isLandscape)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('List', style: Theme.of(context).textTheme.subhead),
-                      Switch.adaptive(
-                        activeColor: Theme.of(context).accentColor,
-                        activeTrackColor: Theme.of(context).accentColor,
-                        value: _showChart,
-                        onChanged: (val) {
-                          setState(() {
-                            _showChart = val;
-                          });
-                        },
-                      ),
-                      Text(
-                        'Chart',
-                        style: Theme.of(context).textTheme.subhead,
-                      ),
-                    ],
+                  ..._buildLandscapeModeWidget(
+                    chartWidget,
+                    txListWidget,
                   ),
-                if (!isLandscape) chartWidget,
-                if (!isLandscape) txListWidget,
-                if (isLandscape) _showChart ? chartWidget : txListWidget,
+                if (!isLandscape)
+                  ..._buildPortraitModeWidget(
+                    chartWidget,
+                    txListWidget,
+                  ),
               ]),
             ),
           );
